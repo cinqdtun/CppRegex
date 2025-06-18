@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:01:28 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/17 20:08:26 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 09:45:37 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,6 @@
 
 Regex::Regex(const std::string& pattern) 
 {
-    
+    (void)pattern;
 }
 Regex::~Regex() {}

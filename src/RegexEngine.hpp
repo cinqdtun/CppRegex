@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:10:48 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/17 22:36:49 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 10:02:26 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,15 @@ class RegexEngine
 			public:
 				const char * what () const throw();
 		};
-        std::vector<Token> tokenize(const std::string& pattern);
+        static std::list<Token*>   tokenize(const std::string& pattern);
+        static void                printTokensList(const std::list<Token*>& tokens);
     private:
         RegexEngine();
         RegexEngine(const RegexEngine& obj);
         ~RegexEngine();
         RegexEngine&    operator=(const RegexEngine& obj);
 
-        Token           translateEscaped(char c);
+        static Token*   translateEscaped(char c);
 };
 
 #endif

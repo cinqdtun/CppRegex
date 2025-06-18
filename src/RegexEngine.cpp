@@ -6,15 +6,15 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:11:19 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/17 23:15:26 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 10:04:55 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./RegexEngine.hpp"
 
-std::vector<Token> RegexEngine::tokenize(const std::string& pattern)
+std::list<Token*> RegexEngine::tokenize(const std::string& pattern)
 {
-    std::list<Token> tokens;
+    std::list<Token*> tokens;
     std::string::const_iterator it = pattern.begin();
     bool inClass = false;
 
@@ -25,21 +25,23 @@ std::vector<Token> RegexEngine::tokenize(const std::string& pattern)
             switch (*it)
             {
                 case '[':
-                    tokens.push_back(Token::CHAR_CLASS_START);
+                    tokens.push_back(new Token(Token::CHAR_CLASS_START));
                     inClass = true;
                     break;
                 case ']':
-                    tokens.push_back(Token::CHAR_CLASS_END);
+                    if ((*tokens.rbegin())->getType() == Token::CHAR_CLASS_START)
+                        throw InvalidPatternException();
+                    tokens.push_back(new Token(Token::CHAR_CLASS_END));
                     inClass = false;
                     break;
                 case '+':
-                    tokens.push_back(Token::ONE_OR_MORE);
+                    tokens.push_back(new Token(Token::ONE_OR_MORE));
                     break;
                 case '*':
-                    tokens.push_back(Token::ZERO_OR_MORE);
+                    tokens.push_back(new Token(Token::ZERO_OR_MORE));
                     break;
                 case '.':
-                    tokens.push_back(Token::ANYTHING);
+                    tokens.push_back(new Token(Token::ANYTHING));
                     break;
                 case '\\':
                     ++it;
@@ -48,7 +50,7 @@ std::vector<Token> RegexEngine::tokenize(const std::string& pattern)
                     tokens.push_back(translateEscaped(*it));
                     break;
                 default:
-                    tokens.push_back(Token::LITERAL);
+                    tokens.push_back(new Token(Token::LITERAL));
                     break;
             }
         }
@@ -56,6 +58,12 @@ std::vector<Token> RegexEngine::tokenize(const std::string& pattern)
         {
             switch (*it)
             {
+                case ']':
+                    if ((*tokens.rbegin())->getType() == Token::CHAR_CLASS_START)
+                        throw InvalidPatternException();
+                    tokens.push_back(new Token(Token::CHAR_CLASS_END));
+                    inClass = false;
+                    break;
                 case '\\':
                     ++it;
                     if (it == pattern.end())
@@ -63,41 +71,85 @@ std::vector<Token> RegexEngine::tokenize(const std::string& pattern)
                     tokens.push_back(translateEscaped(*it));
                     break;
                 case '-':
-                    if ((*tokens.rbegin()).getType() == Token::LITERAL)
+                    if ((*tokens.rbegin())->getType() == Token::LITERAL)
                     {
                         ++it;
                         if (it == pattern.end())
                             throw InvalidPatternException();
+                        char start = dynamic_cast<LiteralToken*>(
+                                *tokens.rbegin())->getLiteral();
+                        char end;
                         if (*it == '\\')
                         {
                             ++it;
                             if (it == pattern.end())
                                 throw InvalidPatternException();
-                            
+                            Token* tok = translateEscaped(*it);
+                            if (tok->getType() == Token::LITERAL)
+                            {
+                                end = dynamic_cast<LiteralToken*>(
+                                    tok)->getLiteral();
+                                delete *tokens.rbegin();
+                                tokens.pop_back();
+                                tokens.push_back(start == end ? 
+                                    (Token*)new LiteralToken(start) : 
+                                    (Token*)new RangeToken(start, end));
+                                delete tok;
+                            }
+                            else
+                            {
+                                tokens.push_back(new LiteralToken('-'));
+                                tokens.push_back(tok);
+                            }
+                        }
+                        else
+                        {
+                            end = *it;
+                            tokens.pop_back();
+                            tokens.push_back(start == end ? 
+                                    (Token*)new LiteralToken(start) : 
+                                    (Token*)new RangeToken(start, end));
                         }
                     }
+                    else
+                    {
+                        tokens.push_back(new LiteralToken('-'));
+                    }
+                    break;
                 default:
-                   
-                    break; tokens.push_back(LiteralToken(*it));
+                    tokens.push_back(new LiteralToken(*it));
+                    break; 
             }
         }
         ++it;
     }
-    
     if (inClass)
         throw InvalidPatternException();
+    return (tokens);
 }
 
-Token RegexEngine::translateEscaped(char c)
+void RegexEngine::printTokensList(const std::list<Token*>& tokens)
+{
+    std::list<Token*>::const_iterator it;
+
+    for (it = tokens.begin(); it != tokens.end(); ++it)
+    {
+        if (it != tokens.begin())
+            std::cout << "|" << std::endl;
+        (*it)->printToken();
+    }
+}
+
+Token* RegexEngine::translateEscaped(char c)
 {
     switch (c)
     {
-        case 'd': return Token(Token::DIGIT);
-        case 'w': return Token(Token::WORD);
-        case 's': return LiteralToken(' ');
-        case 'n': return LiteralToken('\n');
-        case 't': return LiteralToken('\t');
-        default: return LiteralToken(c);
+        case 'd': return new Token(Token::DIGIT);
+        case 'w': return new Token(Token::WORD);
+        case 's': return new LiteralToken(' ');
+        case 'n': return new LiteralToken('\n');
+        case 't': return new LiteralToken('\t');
+        default: return new LiteralToken(c);
     }
 }
 
