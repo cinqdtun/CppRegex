@@ -1,22 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ClassToken.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/17 20:04:08 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 10:39:21 by fdehan           ###   ########.fr       */
+/*   Created: 2025/06/18 15:09:01 by fdehan            #+#    #+#             */
+/*   Updated: 2025/06/18 15:11:46 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./Regex.hpp"
-#include "./RegexEngine.hpp"
+#ifndef CLASSTOKEN_HPP
+# define CLASSTOKEN_HPP
 
-int main()
+#include <list>
+#include "./Token.hpp"
+
+
+class ClassToken : public Token
 {
-    std::list<Token*> tokens = RegexEngine::tokenize("[e-u\\d]+.*");
-    RegexEngine::printTokensList(tokens);
-    //Regex re("test");
-    return (0);
-}
+	public:
+		ClassToken(char literal);
+        ClassToken(const ClassToken& obj);
+        ~ClassToken();
+        ClassToken&   operator=(const ClassToken& obj);
+	private:
+		std::list<Token*> tokens;
+};
+
+# endif

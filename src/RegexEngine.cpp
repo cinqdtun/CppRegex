@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:11:19 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 11:01:30 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 14:55:47 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ std::list<Token*> RegexEngine::tokenize(const std::string& pattern)
                     tokens.push_back(translateEscaped(*it));
                     break;
                 default:
-                    tokens.push_back(new Token(Token::LITERAL));
+                    tokens.push_back(new LiteralToken(*it));
                     break;
             }
         }
@@ -130,7 +130,16 @@ std::list<Token*> RegexEngine::tokenize(const std::string& pattern)
     return (tokens);
 }
 
+std::list<AstNode> RegexEngine::transformToAst(const std::list<Token*>& tokens)
+{
+	std::list<AstNode> ast;
+	std::list<Token*>::const_iterator it;
 
+	for (it = tokens.begin(); it != tokens.end(); ++it)
+	{
+		
+	}
+}
 
 void RegexEngine::printTokensList(const std::list<Token*>& tokens)
 {
@@ -163,6 +172,7 @@ bool RegexEngine::isSyntaxValid(const std::list<Token*>& tokens)
 
 void RegexEngine::optimize(std::list<Token*>& tokens)
 {
+	(void)tokens;
     // Can optimize to reduce complexity
 }
 

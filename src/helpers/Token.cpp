@@ -37,15 +37,16 @@ Token::Type Token::getType() const
 void Token::printToken() const
 {
     std::string arr[] = {"DEFAULT",
+			"ANYTHING",
+            "DIGIT",
+            "WORD",
             "CHAR_CLASS_START",
             "CHAR_CLASS_END",
             "RANGE",
             "LITERAL",
+			"ZERO_OR_MORE",
             "ONE_OR_MORE",
-            "ZERO_OR_MORE",
-            "ANYTHING",
-            "DIGIT",
-            "WORD"};
+	};
     std::cout << "Type: " << arr[this->_type] << std::endl;
 }
 
