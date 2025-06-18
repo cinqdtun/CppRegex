@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:11:19 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 10:04:55 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 11:01:30 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,10 +123,14 @@ std::list<Token*> RegexEngine::tokenize(const std::string& pattern)
         }
         ++it;
     }
-    if (inClass)
+    if (inClass || !isSyntaxValid(tokens))
         throw InvalidPatternException();
+    
+    optimize(tokens);
     return (tokens);
 }
+
+
 
 void RegexEngine::printTokensList(const std::list<Token*>& tokens)
 {
@@ -138,6 +142,28 @@ void RegexEngine::printTokensList(const std::list<Token*>& tokens)
             std::cout << "|" << std::endl;
         (*it)->printToken();
     }
+}
+
+bool RegexEngine::isSyntaxValid(const std::list<Token*>& tokens)
+{
+    std::list<Token*>::const_iterator it;
+    bool quantFound = false;
+    
+    for (it = tokens.begin(); it != tokens.end(); ++it)
+    {
+        bool isQuant = (*it)->isQuantitativeToken();
+        
+        if (quantFound && isQuant)
+            return (false);
+        
+        quantFound = isQuant;
+    }
+    return (true);
+}
+
+void RegexEngine::optimize(std::list<Token*>& tokens)
+{
+    // Can optimize to reduce complexity
 }
 
 Token* RegexEngine::translateEscaped(char c)

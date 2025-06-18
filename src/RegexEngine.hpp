@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:10:48 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 10:02:26 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 10:59:11 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class RegexEngine
         ~RegexEngine();
         RegexEngine&    operator=(const RegexEngine& obj);
 
+        static bool     isSyntaxValid(const std::list<Token*>& tokens);
+        static void     optimize(std::list<Token*>& tokens);
         static Token*   translateEscaped(char c);
 };
 

@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:22:37 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 09:53:21 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 10:55:09 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,9 @@ void Token::printToken() const
             "DIGIT",
             "WORD"};
     std::cout << "Type: " << arr[this->_type] << std::endl;
+}
+
+bool Token::isQuantitativeToken()
+{
+    return (this->_type >= ONE_OR_MORE);
 }
