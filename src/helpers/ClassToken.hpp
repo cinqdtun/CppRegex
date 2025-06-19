@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 15:09:01 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 15:11:46 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 20:24:43 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,16 @@
 class ClassToken : public Token
 {
 	public:
-		ClassToken(char literal);
+		ClassToken();
         ClassToken(const ClassToken& obj);
         ~ClassToken();
-        ClassToken&   operator=(const ClassToken& obj);
+        ClassToken& 				operator=(const ClassToken& obj);
+		std::list<Token*>& 			getTokens();
+		const std::list<Token*>&	getTokens() const;
+		void            			printToken() const;
+		ClassToken*					clone() const;
 	private:
-		std::list<Token*> tokens;
+		std::list<Token*> _tokens;
 };
 
 # endif

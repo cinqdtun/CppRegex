@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:10:48 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 14:51:56 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 20:11:10 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "./helpers/Token.hpp"
 #include "./helpers/RangeToken.hpp"
 #include "./helpers/LiteralToken.hpp"
+#include "./helpers/ClassToken.hpp"
 #include "./helpers/ast/AstNode.hpp"
 
 class RegexEngine
@@ -31,6 +32,7 @@ class RegexEngine
         static std::list<Token*>	tokenize(const std::string& pattern);
 		static std::list<AstNode>	transformToAst(const std::list<Token*>& tokens);
         static void					printTokensList(const std::list<Token*>& tokens);
+        static void                 printAst(const std::list<AstNode>& ast);
     private:
         RegexEngine();
         RegexEngine(const RegexEngine& obj);

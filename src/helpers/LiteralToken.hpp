@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:40:00 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 09:52:29 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 20:24:10 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class LiteralToken : public Token
 
         char            getLiteral() const;
         void            printToken() const;
+        LiteralToken*   clone() const;
     private:
         char    _literal;
 };

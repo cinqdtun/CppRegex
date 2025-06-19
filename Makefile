@@ -5,9 +5,11 @@ RMFLAGS = -f
 NAME = CppRegex
 HEADERS = ./src/Regex.hpp \
 		  ./src/RegexEngine.hpp \
+		  ./src/helpers/ClassToken.hpp \
 		  ./src/helpers/LiteralToken.hpp \
 		  ./src/helpers/RangeToken.hpp \
-		  ./src/helpers/Token.hpp
+		  ./src/helpers/Token.hpp \
+		  ./src/helpers/ast/AstNode.hpp
 SRCS = ./src/main.cpp $(HEADERS:.hpp=.cpp)
 OBJS = $(SRCS:.cpp=.o)
 

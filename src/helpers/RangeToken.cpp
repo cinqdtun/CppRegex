@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:32:02 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 09:35:32 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 20:23:35 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,9 @@ void RangeToken::printToken() const
     std::cout << "Type: RANGE between " 
         << this->_start << " (" << (int)this->_start << ") and " 
         << this->_end << " (" << (int)this->_end << ")" << std::endl;
+}
+
+RangeToken* RangeToken::clone() const
+{
+    return (new RangeToken(*this));
 }

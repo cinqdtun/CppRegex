@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:29:40 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 09:32:09 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 20:23:46 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class RangeToken : public Token
         char        getStart() const;
         char        getEnd() const;
         void        printToken() const;
+        RangeToken* clone() const;
     private:
         char    _start;
         char    _end;

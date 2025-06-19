@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:11:19 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 14:55:47 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/19 10:02:37 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,17 @@ std::list<Token*> RegexEngine::tokenize(const std::string& pattern)
     std::list<Token*> tokens;
     std::string::const_iterator it = pattern.begin();
     bool inClass = false;
-
+    ClassToken* cToken = NULL;
+    std::list<Token*>* cTokenList = NULL;
     while (it != pattern.end())
     {
-        if (!inClass)
+        if (!cToken)
         {
             switch (*it)
             {
                 case '[':
-                    tokens.push_back(new Token(Token::CHAR_CLASS_START));
-                    inClass = true;
-                    break;
-                case ']':
-                    if ((*tokens.rbegin())->getType() == Token::CHAR_CLASS_START)
-                        throw InvalidPatternException();
-                    tokens.push_back(new Token(Token::CHAR_CLASS_END));
-                    inClass = false;
+                    cToken = new ClassToken();
+                    cTokenList = &cToken->getTokens();
                     break;
                 case '+':
                     tokens.push_back(new Token(Token::ONE_OR_MORE));
@@ -59,25 +54,26 @@ std::list<Token*> RegexEngine::tokenize(const std::string& pattern)
             switch (*it)
             {
                 case ']':
-                    if ((*tokens.rbegin())->getType() == Token::CHAR_CLASS_START)
+                    if (cTokenList->size() == 0)
                         throw InvalidPatternException();
-                    tokens.push_back(new Token(Token::CHAR_CLASS_END));
-                    inClass = false;
+                    tokens.push_back(cToken);
+                    cToken = NULL;
                     break;
                 case '\\':
                     ++it;
                     if (it == pattern.end())
                         throw InvalidPatternException();
-                    tokens.push_back(translateEscaped(*it));
+                    cTokenList->push_back(translateEscaped(*it));
                     break;
                 case '-':
-                    if ((*tokens.rbegin())->getType() == Token::LITERAL)
+                    if (cTokenList->size() && 
+                        (*cTokenList->rbegin())->getType() == Token::LITERAL)
                     {
                         ++it;
                         if (it == pattern.end())
                             throw InvalidPatternException();
                         char start = dynamic_cast<LiteralToken*>(
-                                *tokens.rbegin())->getLiteral();
+                                *cTokenList->rbegin())->getLiteral();
                         char end;
                         if (*it == '\\')
                         {
@@ -89,35 +85,39 @@ std::list<Token*> RegexEngine::tokenize(const std::string& pattern)
                             {
                                 end = dynamic_cast<LiteralToken*>(
                                     tok)->getLiteral();
-                                delete *tokens.rbegin();
-                                tokens.pop_back();
-                                tokens.push_back(start == end ? 
+                                delete *cTokenList->rbegin();
+                                cTokenList->pop_back();
+                                cTokenList->push_back(start == end ? 
                                     (Token*)new LiteralToken(start) : 
                                     (Token*)new RangeToken(start, end));
                                 delete tok;
                             }
                             else
                             {
-                                tokens.push_back(new LiteralToken('-'));
-                                tokens.push_back(tok);
+                                cTokenList->push_back(new LiteralToken('-'));
+                                cTokenList->push_back(tok);
                             }
                         }
-                        else
+                        else if (*it != ']')
                         {
                             end = *it;
-                            tokens.pop_back();
-                            tokens.push_back(start == end ? 
+                            cTokenList->pop_back();
+                            cTokenList->push_back(start == end ? 
                                     (Token*)new LiteralToken(start) : 
                                     (Token*)new RangeToken(start, end));
                         }
+                        else
+                        {
+                            cTokenList->push_back(new LiteralToken('-'));
+                            tokens.push_back(cToken);
+                            cToken = NULL;
+                        }
                     }
                     else
-                    {
-                        tokens.push_back(new LiteralToken('-'));
-                    }
+                       cTokenList->push_back(new LiteralToken('-'));
                     break;
                 default:
-                    tokens.push_back(new LiteralToken(*it));
+                    cTokenList->push_back(new LiteralToken(*it));
                     break; 
             }
         }
@@ -137,9 +137,34 @@ std::list<AstNode> RegexEngine::transformToAst(const std::list<Token*>& tokens)
 
 	for (it = tokens.begin(); it != tokens.end(); ++it)
 	{
-		
+		if (!(*it)->isQuantitativeToken())
+            ast.push_back(*(*it));
+        else
+        {
+            switch ((*it)->getType())
+            {
+                case Token::ZERO_OR_MORE:
+                    (*ast.rbegin()).setMin(0);
+                    (*ast.rbegin()).setMax(__INT_MAX__);
+                    break;
+                case Token::ONE_OR_MORE:
+                    (*ast.rbegin()).setMin(1);
+                    (*ast.rbegin()).setMax(__INT_MAX__);
+                    break;
+                default:
+                    break;
+            }
+        }
 	}
+
+    return (ast);
 }
+
+std::list<>
+
+
+
+
 
 void RegexEngine::printTokensList(const std::list<Token*>& tokens)
 {
@@ -153,10 +178,22 @@ void RegexEngine::printTokensList(const std::list<Token*>& tokens)
     }
 }
 
+void RegexEngine::printAst(const std::list<AstNode>& ast)
+{
+    std::list<AstNode>::const_iterator it;
+
+    for (it = ast.begin(); it != ast.end(); ++it)
+    {
+        if (it != ast.begin())
+            std::cout << "|" << std::endl;
+        it->print();
+    }
+}
+
 bool RegexEngine::isSyntaxValid(const std::list<Token*>& tokens)
 {
     std::list<Token*>::const_iterator it;
-    bool quantFound = false;
+    bool quantFound = true;
     
     for (it = tokens.begin(); it != tokens.end(); ++it)
     {

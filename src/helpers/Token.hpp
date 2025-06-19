@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:22:44 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 10:54:05 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/18 20:22:27 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Token
             CHAR_CLASS_END,
             RANGE,
             LITERAL,
+            CLASS,
             ZERO_OR_MORE,
             ONE_OR_MORE,
         };
@@ -40,6 +41,7 @@ class Token
 
         Type            getType() const;
         virtual void    printToken() const;
+        virtual Token*  clone() const;
         bool            isQuantitativeToken();
     protected:
         Type    _type;
