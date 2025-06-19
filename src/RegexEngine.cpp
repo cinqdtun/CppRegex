@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:11:19 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/19 10:02:37 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/19 11:09:26 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,11 +160,24 @@ std::list<AstNode> RegexEngine::transformToAst(const std::list<Token*>& tokens)
     return (ast);
 }
 
-std::list<>
+std::list<NFAState> RegexEngine::compileAst(const std::list<AstNode>& ast)
+{
+	std::list<NFAState> states;
 
-
-
-
+	std::list<AstNode>::const_iterator it;
+	size_t state = 0;
+	NFAState nState;
+	for (it = ast.begin(); it != ast.end(); ++it)
+	{
+		nState.clearTransition();
+		nState.setState(state);
+		nState.setIsAccepting(false);
+		
+		nState.addTransition()
+		states.push_back(nState);
+		++state;
+	}
+}
 
 void RegexEngine::printTokensList(const std::list<Token*>& tokens)
 {

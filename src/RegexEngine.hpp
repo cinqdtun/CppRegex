@@ -6,7 +6,7 @@
 /*   By: fdehan <fdehan@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/17 20:10:48 by fdehan            #+#    #+#             */
-/*   Updated: 2025/06/18 20:11:10 by fdehan           ###   ########.fr       */
+/*   Updated: 2025/06/19 10:48:07 by fdehan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "./helpers/LiteralToken.hpp"
 #include "./helpers/ClassToken.hpp"
 #include "./helpers/ast/AstNode.hpp"
+#include "./helpers/NFA/NFAState.hpp"
 
 class RegexEngine
 {
@@ -31,6 +32,7 @@ class RegexEngine
 		};
         static std::list<Token*>	tokenize(const std::string& pattern);
 		static std::list<AstNode>	transformToAst(const std::list<Token*>& tokens);
+		static std::list<NFAState>  compileAst(const std::list<AstNode>& ast);
         static void					printTokensList(const std::list<Token*>& tokens);
         static void                 printAst(const std::list<AstNode>& ast);
     private:
